@@ -19,7 +19,7 @@ try:
             number_to_dac(number)
         
         except ValueError:
-            print("Вы ввели число. Попробуйте еще раз\n")
+            print("Вы ввели не число. Попробуйте еще раз\n")
 finally:
     GPIO.output(leds,0)
     GPIO.cleanup()
