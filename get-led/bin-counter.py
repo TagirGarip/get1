@@ -26,5 +26,3 @@ while True:
             GPIO.output(leds[i],1)
         if dec2bin(num)[i]==0:
             GPIO.output(leds[i],0)
-        if GPIO.input(up and down):
-            GPIO.output(leds,1)
