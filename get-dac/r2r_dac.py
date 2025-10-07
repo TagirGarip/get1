@@ -1,4 +1,6 @@
 import RPi.GPIO as GPIO
+dac_bits=[16,20,21,25,26,17,27,22]
+dynamic_range=3.3
 class R2R_DAC:
     def __init__(self, gpio_bits, dynamic_range, verbose = False):
         self.gpio_bits = gpio_bits
@@ -11,16 +13,23 @@ class R2R_DAC:
         GPIO.output(self.gpio_bits, 0)
         GPIO.cleanup()
     def set_number(self,number):
-        GPIO.output(leds,[int(element) for element in bin(number)[2:].zfill(8)])
+        bins=[int(element) for element in bin(number)[2:].zfill(8)]
+        i=0
+        for led in dac_bits:
+            GPIO.output(led, bins[i])
+            i+=1
     def set_voltage(self,voltage):
-        if not(0.0 <= voltage <= 3.183):
-            print(f"Напряжение выходит за динамический диапозон ЦАП (0.00 - {3.183:.2f} В)")
+        if not(0.0 <= voltage <= 3.3):
+            print(f"Напряжение выходит за динамический диапозон ЦАП (0.00 - {3.3:.2f} В)")
             print("Устанавливаем 0.0 В")
             return 0
-        return int(voltage / 3.183 *255)
+        norm=voltage/3.3
+        digital_value=int(norm*255)
+        digital_value=max(0, min(255, digital_value))
+        self.set_number(digital_value)
 if __name__=="__main__":
     try:
-        dac=R2R_DAC([16,20,21,25,26,17,27,22], 3.183, True)
+        dac=R2R_DAC([16,20,21,25,26,17,27,22], 3.3, True)
 
         while True:
             try:
